@@ -1,9 +1,11 @@
 import unittest
+
 from django.test.client import Client
-from cms.models import Page, Title
 from django.contrib.sites.models import Site
-from cms_redirects.models import CMSRedirect
 from django.conf import settings
+
+from cms.models import Page, Title
+from cms_redirects.models import CMSRedirect
 
 class TestRedirects(unittest.TestCase):
     def setUp(self):
@@ -29,7 +31,8 @@ class TestRedirects(unittest.TestCase):
         c = Client()
         r = c.get('/301_page.php')
         self.assertEqual(r.status_code, 301)
-
+        self.assertEqual(r._headers['location'][1], 'http://testserver/')
+        
     def test_302_page_redirect(self):
         r_302_page = CMSRedirect(site=self.site, page=self.page, old_path='/302_page.php', response_code='302')
         r_302_page.save()
@@ -37,6 +40,7 @@ class TestRedirects(unittest.TestCase):
         c = Client()
         r = c.get('/302_page.php')
         self.assertEqual(r.status_code, 302)
+        self.assertEqual(r._headers['location'][1], 'http://testserver/')
 
     def test_301_path_redirect(self):
         r_301_path = CMSRedirect(site=self.site, new_path='/', old_path='/301_path.php')
@@ -45,6 +49,7 @@ class TestRedirects(unittest.TestCase):
         c = Client()
         r = c.get('/301_path.php')
         self.assertEqual(r.status_code, 301)
+        self.assertEqual(r._headers['location'][1], 'http://testserver/')
 
     def test_302_path_redirect(self):
         r_302_path = CMSRedirect(site=self.site, new_path='/', old_path='/302_path.php', response_code='302')
@@ -53,6 +58,7 @@ class TestRedirects(unittest.TestCase):
         c = Client()
         r = c.get('/302_path.php')
         self.assertEqual(r.status_code, 302)
+        self.assertEqual(r._headers['location'][1], 'http://testserver/')
 
     def test_410_redirect(self):
         r_410 = CMSRedirect(site=self.site, old_path='/410.php', response_code='302')
