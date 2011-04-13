@@ -15,7 +15,7 @@ To get started simply install using ``pip``:
 ::
     pip install django-cms-redirects
 
-Add ``cms_redirects`` to your installed apps and ``syncdb``.  If you are using ``south`` you might want to ``syncdb --all`` and ``migrate --fake``
+Add ``cms_redirects`` to your installed apps and ``syncdb``.
 
 Your installed apps should look something like this:
 ::

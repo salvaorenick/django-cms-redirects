@@ -12,11 +12,16 @@ class CMSRedirect(models.Model):
         help_text=_("This should be an absolute path, excluding the domain name. Example: '/events/search/'."))
     new_path = models.CharField(_('redirect to'), max_length=200, blank=True,
         help_text=_("This can be either an absolute path (as above) or a full URL starting with 'http://'."))
-
+    
+    def page_site(self):
+        if self.page:
+            return u'%s' % self.page.site
+        return u''
+    page_site.short_description = "Page Site"
+    
     class Meta:
-        verbose_name = _('redirect')
-        verbose_name_plural = _('redirects')
-        db_table = 'django_redirect'
+        verbose_name = _('CMS Redirect')
+        verbose_name_plural = _('CMS Redirects')
         unique_together=(('site', 'old_path'),)
         ordering = ('old_path',)
     
