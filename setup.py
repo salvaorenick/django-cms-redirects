@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = __import__('multimedia').__version__
+version = __import__('cms_redirects').__version__
 
 install_requires = [
     'setuptools',
