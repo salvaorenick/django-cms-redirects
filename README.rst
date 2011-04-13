@@ -32,5 +32,14 @@ Your installed apps should look something like this:
 
 Finally, add 'cms_redirects.middleware.RedirectFallbackMiddleware' to your MIDDLEWARE_CLASSES setting.
 
+Usage
+=============
+
+All usage is done through the admin.
+
+Providing a ``redirect from`` value for the source and either a ``redirect to`` or a ``page`` for the destination will result in a 301 redirect
+
+Providing a ``redirect from`` value for the source and NO destination will result in a 410
+
 
 
