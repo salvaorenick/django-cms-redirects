@@ -1,6 +1,6 @@
 django-cms-redirects
 =================
-A django app that lets you store simple redirects in a database and handles the redirecting for you.  Integrated with Django CMS to allow you to link directly to a page object.  Inherits from django.contrib.redirects, but overrides the middleware.
+A django app that lets you store simple redirects in a database and handles the redirecting for you.  Integrated with Django CMS to allow you to link directly to a page object.  Based off django.contrib.redirects.
 
 Dependancies
 ============
