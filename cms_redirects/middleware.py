@@ -19,8 +19,15 @@ class RedirectFallbackMiddleware(object):
                 pass
         if r is not None:
             if r.page:
-                return http.HttpResponsePermanentRedirect(r.page.get_absolute_url())
+                if r.response_code == '302':
+                    return http.HttpResponseRedirect(r.page.get_absolute_url())
+                else:
+                    return http.HttpResponsePermanentRedirect(r.page.get_absolute_url())
             if r.new_path == '':
                 return http.HttpResponseGone()
-            return http.HttpResponsePermanentRedirect(r.new_path)
+            if r.response_code == '302':
+                return http.HttpResponseRedirect(r.new_path)
+            else:
+                return http.HttpResponsePermanentRedirect(r.new_path)
+        
 
