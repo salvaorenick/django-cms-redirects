@@ -9,3 +9,4 @@ pip-log.txt
 build
 dist
 *.egg-info
+redirect_demo/redirect_demo.db
