@@ -11,7 +11,7 @@ class TestRedirects(unittest.TestCase):
     def setUp(self):
         settings.APPEND_SLASH = False
         
-        self.site = Site.objects.all()[0]
+        self.site = Site.objects.get_current()
 
         page = Page()
         page.site = self.site
