@@ -10,3 +10,4 @@ build
 dist
 *.egg-info
 redirect_demo/redirect_demo.db
+redirect_demo/media/*
