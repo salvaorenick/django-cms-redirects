@@ -1,6 +1,7 @@
 import StringIO
 import csv
 import datetime
+import operator
 
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.sites.models import Site
@@ -63,10 +64,11 @@ class Command(BaseCommand):
             connection = Connection(options["ga_user"], options["ga_pwd"])
             account = connection.get_account(options["ga_profile"])
             end_date = datetime.date.today()
-            num_months = options["num_analytics_months"]
+            num_months = int(options["num_analytics_months"])
             start_date = end_date - datetime.timedelta(num_months*365/12)
             data = account.get_data(start_date=start_date, end_date=end_date, dimensions=['pagepath'], metrics=['visits'])
-            for url, visits in data.dict.iteritems():
+            sorted_data = sorted(data.dict.iteritems(), key=operator.itemgetter(1), reverse=True)
+            for url, visits in sorted_data:
                 writer.writerow([csv_safe(url),'',''])
         else:
             [writer.writerow(['','','']) for row in range(0,num_rows)]
