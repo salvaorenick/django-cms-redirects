@@ -2,3 +2,4 @@ django==1.2.5
 django-cms==2.1.3
 django-appmedia
 south
+python-googleanalytics

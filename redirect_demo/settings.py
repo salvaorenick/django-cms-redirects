@@ -175,7 +175,10 @@ INSTALLED_APPS = (
     'cms_redirects',
 )
 
-#admin tools
-ADMIN_TOOLS_INDEX_DASHBOARD = 'dashboard.UncommonCMSIndexDashboard'
 
 SOUTH_TESTS_MIGRATE = False
+
+try:
+    from settings_dev import *
+except ImportError:
+    pass
