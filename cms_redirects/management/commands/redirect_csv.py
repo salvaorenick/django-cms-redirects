@@ -8,7 +8,6 @@ from django.contrib.sites.models import Site
 from django.conf import settings
 from django.utils import simplejson
 
-from googleanalytics import Connection
 from optparse import make_option
 
 class Command(BaseCommand):
@@ -61,6 +60,12 @@ class Command(BaseCommand):
         writer.writerow(['Old Url','New Url','Response Code'])
         writer.writerow(["/old.html","/new",'301, 302 or 410'])
         if options["use_analytics"]:
+            try:
+                from googleanalytics import Connection
+            except ImportError:
+                raise CommandError('Must install python-googleanalytics')
+            if not all([options["ga_user"], options["ga_pwd"], options["ga_profile"]]):
+                raise CommandError('Must specify your google analytics user, password and profile')
             connection = Connection(options["ga_user"], options["ga_pwd"])
             account = connection.get_account(options["ga_profile"])
             end_date = datetime.date.today()
