@@ -21,14 +21,10 @@ class Command(BaseCommand):
     
     Usage:
     ./manage.py redirect_csv > import.csv
-    ./manage.py redirect_csv -ga > import_google_analytics.csv
+    ./manage.py redirect_csv --ga > import_google_analytics.csv
     
     '''
     option_list = BaseCommand.option_list + (
-            make_option('--rows',
-                dest="num_rows",
-                default=5,
-                help="Use to specify the number of extra rows"),
             make_option('--ga',
                 action='store_true',
                 dest="use_analytics",
@@ -54,7 +50,6 @@ class Command(BaseCommand):
     
     
     def execute(self, *args, **options):
-        num_rows =  options["num_rows"]
         output = StringIO.StringIO()
         writer = csv.writer(output)
         writer.writerow(['Old Url','New Url','Response Code'])
@@ -75,8 +70,7 @@ class Command(BaseCommand):
             sorted_data = sorted(data.dict.iteritems(), key=operator.itemgetter(1), reverse=True)
             for url, visits in sorted_data:
                 writer.writerow([csv_safe(url),'',''])
-        else:
-            [writer.writerow(['','','']) for row in range(0,num_rows)]
+                
         print output.getvalue()
         
 def csv_safe(s):
