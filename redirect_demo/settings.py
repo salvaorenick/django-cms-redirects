@@ -68,11 +68,6 @@ LANGUAGE_CODE = 'en'
 
 CMS_TEMPLATES = (
 		('home.html', gettext('Homepage')),
-		('content2.html', gettext('Content')),
-		('content.html', gettext('Content (without image)')),
-		('content3.html', gettext('Content (without left nav)')),
-		('freezgard_base.html', gettext('FreezGard Homepage')),
-		('freezgard_content.html', gettext('FreezGard Content')),
 )
 
 CMS_PLACEHOLDER_CONF = {

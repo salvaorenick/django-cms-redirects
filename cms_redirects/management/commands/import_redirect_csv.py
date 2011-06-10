@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
 
+from cms_redirects.models import CMSRedirect
 
 class Command(BaseCommand):
     can_import_settings = True
@@ -41,9 +42,15 @@ class Command(BaseCommand):
                 raise CommandError("No site found, invalid domain: %s" % options["site"])
                 
         for row in reader:
-            print row["Old Url"]
-            print row["New Url"]
-            print "*************"
+            old_url = row["Old Url"]
+            new_url = row["New Url"]
+            resp_code = row["Response Code"]
+            if resp_code not in ['301', '302']:
+                resp_code = '301'
+            redirect, created = CMSRedirect.objects.get_or_create(site=current_site, old_path=old_url)
+            redirect.new_path = new_url
+            redirect.response_code = resp_code
+            redirect.save()
             
         
         
