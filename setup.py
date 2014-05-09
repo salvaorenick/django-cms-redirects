@@ -1,18 +1,8 @@
 """Setup for django-cms-redirects."""
 from setuptools import setup, find_packages
 
+
 version = __import__('cms_redirects').__version__
-
-install_requires = [
-    'setuptools',
-    'django<1.6',
-    'django-cms<3'
-]
-
-tests_require = [
-    'south==0.8.4',
-    'django-nose'
-]
 
 setup(
     name="django-cms-redirects",
@@ -24,7 +14,11 @@ setup(
     author="Andrew Schoen",
     author_email='andrew.schoen@gmail.com',
     packages=find_packages(),
-    install_requires=install_requires,
+    install_requires=[
+        'setuptools',
+        'django <1.6',
+        'django-cms <3'
+    ],
     include_package_data=True,
     zip_safe=False,
     classifiers=[
@@ -41,6 +35,9 @@ setup(
     package_dir={
         'cms_redirects': 'cms_redirects',
     },
+    tests_require=[
+        'django-nose'
+    ],
     test_suite='django',
     test_loader='run_tests:RunTests'
 )
