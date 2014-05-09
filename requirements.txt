@@ -1,0 +1,10 @@
+Django==1.6.4
+South==0.8.4
+django-classy-tags==0.5.1
+django-cms==3.0.1
+django-mptt==0.6.0
+django-sekizai==0.7
+djangocms-admin-style==0.2.2
+html5lib==0.999
+six==1.6.1
+wsgiref==0.1.2
