@@ -1,57 +1,76 @@
+"""Redirect middleware for Django CMS."""
+from urlparse import urlparse
+
 from cms_redirects.models import CMSRedirect
 from django import http
 from django.conf import settings
 
 
-def get_redirect(old_path):
-    try:
-        r = CMSRedirect.objects.get(site__id__exact=settings.SITE_ID,
-                                    old_path=old_path)
-    except CMSRedirect.DoesNotExist:
-        r = None
-    return r
+class RedirectMiddleware(object):
+    """Middleware for handling redirects."""
+    def get_possible_paths(self, parsed_path):
+        """Get a list of possible url paths to look for."""
+        # Get the usable url parts
+        path = parsed_path.path
 
+        # We'll always lookup the exact path
+        possible_paths = [path]
 
-def remove_slash(path):
-    return path[:path.rfind('/')]+path[path.rfind('/')+1:]
+        # Sometimes people define urls without the trailing slash when
+        # settings.APPEND_SLASH is True.
+        if settings.APPEND_SLASH and path.endswith('/'):
+            possible_paths.append(path[:-1])
 
+        return possible_paths
 
-def remove_query(path):
-    return path.split('?', 1)[0]
+    def get_query(self, parsed_path):
+        """Get and format query parameters."""
+        if parsed_path.query:
+            query = '?%s' % parsed_path.query
+        else:
+            query = ''
 
+        return query
 
-class RedirectFallbackMiddleware(object):
+    def get_cms_redirect(self, possible_paths):
+        """Get the latest redirect for the specified path."""
+        try:
+            redirect = CMSRedirect.objects.filter(
+                site__id__exact=settings.SITE_ID,
+                old_path__in=possible_paths
+            ).latest('pk')
+        except CMSRedirect.DoesNotExist:
+            redirect = None
+        return redirect
+
+    def get_cms_redirect_response_class(self, redirect):
+        """Get the appropriate redirect class."""
+        if int(redirect.response_code) == 302:
+            return http.HttpResponseRedirect
+        else:
+            return http.HttpResponsePermanentRedirect
+
+    def cms_redirect(self, redirect, query):
+        """Returns the response object."""
+        if not redirect.page and not redirect.new_path:
+            return http.HttpResponseGone()
+
+        response_class = self.get_cms_redirect_response_class(redirect)
+        if redirect.page:
+            redirect_to = '%s%s' % (redirect.page.get_absolute_url(), query)
+        else:
+            redirect_to = '%s%s' % (redirect.new_path, query)
+
+        return response_class(redirect_to)
+
     def process_exception(self, request, exception):
-        if isinstance(exception, http.Http404):
+        """Handle 404 exceptions and check for redirects."""
+        if not isinstance(exception, http.Http404):
+            return
 
-            # First try the whole path.
-            path = request.get_full_path()
-            r = get_redirect(path)
-
-            # It could be that we need to try without a trailing slash.
-            if r is None and settings.APPEND_SLASH:
-                r = get_redirect(remove_slash(path))
-
-            # It could be that the redirect is defined without a query string.
-            if r is None and path.count('?'):
-                r = get_redirect(remove_query(path))
-
-            # It could be that we need to try without query string and without a trailing slash.
-            if r is None and path.count('?') and settings.APPEND_SLASH:
-                r = get_redirect(remove_slash(remove_query(path)))
-
-
-            if r is not None:
-                if r.page:
-                    if r.response_code == '302':
-                        return http.HttpResponseRedirect(r.page.get_absolute_url())
-                    else:
-                        return http.HttpResponsePermanentRedirect(r.page.get_absolute_url())
-                if r.new_path == '':
-                    return http.HttpResponseGone()
-                if r.response_code == '302':
-                    return http.HttpResponseRedirect(r.new_path)
-                else:
-                    return http.HttpResponsePermanentRedirect(r.new_path)
-
-
+        parsed_path = urlparse(request.get_full_path())
+        possible_paths = self.get_possible_paths(parsed_path)
+        cms_redirect = self.get_cms_redirect(possible_paths)
+        if cms_redirect:
+            query = self.get_query(parsed_path)
+            return self.cms_redirect(cms_redirect, query)
