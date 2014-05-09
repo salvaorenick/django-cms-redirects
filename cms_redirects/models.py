@@ -1,6 +1,7 @@
 """Models for cms redirects."""
 from django.db import models
 from django.contrib.sites.models import Site
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from cms.models.fields import PageField
 
@@ -9,6 +10,10 @@ RESPONSE_CODES = (
     ('301', '301'),
     ('302', '302')
 )
+
+
+DEFAULT_REDIRECT_RESPONSE_CODE = getattr(
+    settings, 'DEFAULT_REDIRECT_RESPONSE_CODE', '301')
 
 
 class CMSRedirect(models.Model):
@@ -38,7 +43,7 @@ class CMSRedirect(models.Model):
         verbose_name=_('response code'),
         max_length=3,
         choices=RESPONSE_CODES,
-        default=RESPONSE_CODES[0][0],
+        default=DEFAULT_REDIRECT_RESPONSE_CODE,
         help_text=_("This is the http response code returned if a destination"
                     " is specified. If no destination is specified"
                     " the response code will be 410.")
