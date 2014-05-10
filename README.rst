@@ -1,3 +1,5 @@
+.. image:: https://travis-ci.org/jbouvier/django-cms-redirects.svg?branch=master   :target: https://travis-ci.org/jbouvier/django-cms-redirects
+
 django-cms-redirects
 =================
 A django app that lets you store simple redirects in a database and handles the redirecting for you.  Integrated with Django CMS to allow you to link directly to a page object.  Based off django.contrib.redirects.
