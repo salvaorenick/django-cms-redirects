@@ -1,4 +1,4 @@
-.. image:: https://travis-ci.org/jbouvier/django-cms-redirects.svg?branch=master   :target: https://travis-ci.org/jbouvier/django-cms-redirects
+.. image:: https://api.travis-ci.org/jbouvier/django-cms-redirects.svg?branch=master :target: https://travis-ci.org/jbouvier/django-cms-redirects
 
 django-cms-redirects
 =================
