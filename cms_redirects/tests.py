@@ -34,9 +34,9 @@ class TestRedirects(TestCase):
                                  old_path='/301_page.php')
         r_301_page.save()
 
-        r = self.client.get('/301_page.php')
-        self.assertEqual(r.status_code, 301)
-        self.assertEqual(r._headers['location'][1], 'http://testserver/')
+        response = self.client.get('/301_page.php')
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response._headers['location'][1], 'http://testserver/')
 
     def test_302_page_redirect(self):
         r_302_page = CMSRedirect(site=self.site,
@@ -45,9 +45,9 @@ class TestRedirects(TestCase):
                                  response_code='302')
         r_302_page.save()
 
-        r = self.client.get('/302_page.php')
-        self.assertEqual(r.status_code, 302)
-        self.assertEqual(r._headers['location'][1], 'http://testserver/')
+        response = self.client.get('/302_page.php')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response._headers['location'][1], 'http://testserver/')
 
     def test_301_path_redirect(self):
         r_301_path = CMSRedirect(site=self.site,
@@ -55,9 +55,9 @@ class TestRedirects(TestCase):
                                  old_path='/301_path.php')
         r_301_path.save()
 
-        r = self.client.get('/301_path.php')
-        self.assertEqual(r.status_code, 301)
-        self.assertEqual(r._headers['location'][1], 'http://testserver/')
+        response = self.client.get('/301_path.php')
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response._headers['location'][1], 'http://testserver/')
 
     def test_302_path_redirect(self):
         r_302_path = CMSRedirect(site=self.site,
@@ -66,9 +66,9 @@ class TestRedirects(TestCase):
                                  response_code='302')
         r_302_path.save()
 
-        r = self.client.get('/302_path.php')
-        self.assertEqual(r.status_code, 302)
-        self.assertEqual(r._headers['location'][1], 'http://testserver/')
+        response = self.client.get('/302_path.php')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response._headers['location'][1], 'http://testserver/')
 
     def test_410_redirect(self):
         r_410 = CMSRedirect(site=self.site,
@@ -76,8 +76,8 @@ class TestRedirects(TestCase):
                             response_code='302')
         r_410.save()
 
-        r = self.client.get('/410.php')
-        self.assertEqual(r.status_code, 410)
+        response = self.client.get('/410.php')
+        self.assertEqual(response.status_code, 410)
 
     def test_redirect_can_ignore_query_string(self):
         """
@@ -89,6 +89,6 @@ class TestRedirects(TestCase):
                                  old_path='/301_page.php')
         r_301_page.save()
 
-        r = self.client.get('/301_page.php?this=is&a=query&string')
-        self.assertEqual(r.status_code, 301)
-        self.assertEqual(r._headers['location'][1], 'http://testserver/')
+        response = self.client.get('/301_page.php?this=is&a=query&string')
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response._headers['location'][1], 'http://testserver/')
