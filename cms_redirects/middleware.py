@@ -13,7 +13,7 @@ def get_redirect(old_path):
 
 
 def remove_slash(path):
-    return path[:path.rfind('/')]+path[path.rfind('/')+1:]
+    return path[:path.rfind('/')] + path[path.rfind('/') + 1:]
 
 
 def remove_query(path):
@@ -21,6 +21,7 @@ def remove_query(path):
 
 
 class RedirectFallbackMiddleware(object):
+
     def process_exception(self, request, exception):
         if isinstance(exception, http.Http404):
 
@@ -40,7 +41,6 @@ class RedirectFallbackMiddleware(object):
             if r is None and path.count('?') and settings.APPEND_SLASH:
                 r = get_redirect(remove_slash(remove_query(path)))
 
-
             if r is not None:
                 if r.page:
                     if r.response_code == '302':
@@ -53,5 +53,3 @@ class RedirectFallbackMiddleware(object):
                     return http.HttpResponseRedirect(r.new_path)
                 else:
                     return http.HttpResponsePermanentRedirect(r.new_path)
-
-
