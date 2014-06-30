@@ -42,7 +42,7 @@ class RedirectMiddlewareTest(TestCase):
         """Should return the query string prepended by a ?."""
         path = urlparse('http://localhost/some/path/?a=b&c=dee')
         result = self.middleware.get_query(path)
-        self.assertEqual(result, '?a=b&c=dee')
+        self.assertEqual(result, 'a=b&c=dee')
 
     def test_get_query_empty(self):
         """Should return an empty string."""
@@ -111,7 +111,7 @@ class RedirectMiddlewareTest(TestCase):
             site_id=1,
             old_path='/page/elsewhere/',
         )
-        result = self.middleware.cms_redirect(cmsredirect, '?a=b')
+        result = self.middleware.cms_redirect(cmsredirect, 'a=b')
         self.assertEqual(
             result['Location'], '/en/a-page-somewhere/?a=b')
 
@@ -122,7 +122,7 @@ class RedirectMiddlewareTest(TestCase):
             old_path='/page/elsewhere/',
             new_path='/something/new/'
         )
-        result = self.middleware.cms_redirect(cmsredirect, '?a=b')
+        result = self.middleware.cms_redirect(cmsredirect, 'a=b')
         self.assertEqual(
             result['Location'], '/something/new/?a=b')
 
@@ -153,3 +153,25 @@ class RedirectMiddlewareTest(TestCase):
         request = self.factory.get('/page/elsewhere/?a=b')
         result = self.middleware.process_exception(request, http.Http404())
         self.assertEqual(result['Location'], '/something/new/?a=b')
+
+    def test_source_and_destination_have_query_strings(self):
+        """Parameters should be merged."""
+        CMSRedirect.objects.create(
+            site_id=1,
+            old_path='/page/elsewhere/',
+            new_path='/something/new/?cow=moo'
+        )
+        request = self.factory.get('/page/elsewhere/?a=b')
+        result = self.middleware.process_exception(request, http.Http404())
+        self.assertEqual(result['Location'], '/something/new/?cow=moo&a=b')
+
+    def test_source_and_destination_have_common_query_string_params(self):
+        """Query string can have multiples of the same parameter."""
+        CMSRedirect.objects.create(
+            site_id=1,
+            old_path='/page/elsewhere/',
+            new_path='/new/?cow=moo'
+        )
+        request = self.factory.get('/page/elsewhere/?cow=bark&a=b')
+        result = self.middleware.process_exception(request, http.Http404())
+        self.assertEqual(result['Location'], '/new/?cow=moo&cow=bark&a=b')

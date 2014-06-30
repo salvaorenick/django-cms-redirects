@@ -26,7 +26,7 @@ class RedirectMiddleware(object):
     def get_query(self, parsed_path):
         """Get and format query parameters."""
         if parsed_path.query:
-            query = '?%s' % parsed_path.query
+            query = parsed_path.query
         else:
             query = ''
 
@@ -57,8 +57,15 @@ class RedirectMiddleware(object):
 
         response_class = self.get_cms_redirect_response_class(redirect)
         if redirect.page:
+            if query:
+                query = '?{query}'.format(query=query)
             redirect_to = '%s%s' % (redirect.page.get_absolute_url(), query)
         else:
+            if query and '?' in redirect.new_path:
+                query = '&{query}'.format(query=query)
+            elif query:
+                query = '?{query}'.format(query=query)
+
             redirect_to = '%s%s' % (redirect.new_path, query)
 
         return response_class(redirect_to)

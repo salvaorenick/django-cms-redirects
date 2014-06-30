@@ -4,7 +4,6 @@ from unittest import TestSuite
 import os
 
 
-
 class RunTests(object):
     """Used to run tests from setup.py"""
     def loadTestsFromNames(self, *args, **kwargs):
